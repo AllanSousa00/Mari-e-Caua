@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caça ao Contexto | Jogo</title>
+    <meta
+        name="description"
+        content="Página do jogo Caça ao Contexto."
+    >
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Oxanium:wght@500;600;700;800&family=Sora:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+    <link rel="stylesheet" href="css/style.css?v=12">
+</head>
+<body class="page page--game" data-page="game" data-skin="coral">
+    <main class="shell shell--game">
+        <header class="topbar">
+            <a class="button button--ghost" href="index.html">Menu</a>
+            <div class="topbar-copy">
+                <p id="subject-name" class="eyebrow"></p>
+                <h1 id="theme-name">Carregando...</h1>
+            </div>
+            <a class="button button--ghost" href="configuracoes.html">Config.</a>
+        </header>
+
+        <div class="game-layout">
+            <section class="board-card">
+                <div class="board-toolbar">
+                    <div class="hud">
+                        <span id="timer-display" class="hud-chip">Tempo 00:00</span>
+                        <span id="score-display" class="hud-chip">0 pts</span>
+                        <span id="progress-display" class="hud-chip">0/0</span>
+                    </div>
+                    <div class="hud-actions">
+                        <button id="hint-btn" class="button button--ghost" type="button">Pista</button>
+                        <button id="restart-btn" class="button button--ghost" type="button">Novo</button>
+                    </div>
+                </div>
+
+                <section class="mission-panel">
+                    <div class="mission-panel__copy">
+                        <p class="eyebrow">Status da rodada</p>
+                        <h2 id="round-mode-name">Caçada em andamento</h2>
+                        <div id="round-meta" class="tag-list"></div>
+                    </div>
+                    <div class="mission-progress">
+                        <div class="mission-progress__track">
+                            <div id="progress-bar-fill" class="mission-progress__fill"></div>
+                        </div>
+                        <p id="progress-caption" class="selection-feedback">0% do dossiê concluído.</p>
+                    </div>
+                </section>
+
+                <div class="board-frame">
+                    <canvas id="wordsearch-canvas" width="640" height="640"></canvas>
+                </div>
+
+                <p id="selection-feedback" class="selection-feedback">
+                    Arraste em linha reta ou diagonal para encontrar as palavras.
+                </p>
+
+                <section id="finish-card" class="finish-card" hidden>
+                    <p class="eyebrow">Fase concluída</p>
+                    <h3 id="finish-title">Missão encerrada</h3>
+                    <p id="finish-copy"></p>
+                    <div id="finish-stats" class="finish-stats"></div>
+                    <div class="menu-actions">
+                        <button id="play-again-btn" class="button button--primary" type="button">Repetir</button>
+                        <a class="button button--ghost" href="index.html">Voltar ao menu</a>
+                    </div>
+                </section>
+            </section>
+
+            <aside class="panel-card panel-card--side panel-card--compact">
+                <div class="section-head">
+                    <div>
+                        <p class="eyebrow">Dossiê atual</p>
+                        <h2>Resumo do tema</h2>
+                    </div>
+                </div>
+                <div class="status-card">
+                    <strong>Contexto da rodada</strong>
+                    <p id="theme-summary"></p>
+                </div>
+                <div class="section-head">
+                    <div>
+                        <p class="eyebrow">Palavras</p>
+                        <h2>Alvos da rodada</h2>
+                    </div>
+                </div>
+                <div id="word-list" class="word-list"></div>
+                <div class="section-head">
+                    <div>
+                        <p class="eyebrow">Arquivo</p>
+                        <h2>Palavras desbloqueadas</h2>
+                    </div>
+                    <span id="archive-counter" class="hud-chip">0</span>
+                </div>
+                <div id="archive-list" class="archive-list"></div>
+            </aside>
+        </div>
+
+        <section id="unlock-modal" class="unlock-modal" hidden>
+            <div class="unlock-modal__backdrop"></div>
+            <article class="unlock-modal__card">
+                <p class="eyebrow">Descoberta desbloqueada</p>
+                <div id="unlock-modal-body" class="content-card unlock-modal__body"></div>
+                <button id="close-modal-btn" class="button button--primary" type="button">Continuar</button>
+            </article>
+        </section>
+    </main>
+
+    <script src="js/app-data.js?v=12"></script>
+    <script src="js/game.js?v=12"></script>
+</body>
+</html>
