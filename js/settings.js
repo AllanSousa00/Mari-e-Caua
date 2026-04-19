@@ -1,17 +1,16 @@
+const settingsState = {
+    draft: null
+};
+let settingsEventsBound = false;
+
 const settingsElements = {
     presetButtons: Array.from(document.querySelectorAll("[data-preset]")),
-    skinSelect: document.getElementById("skin-select"),
-    difficultySelect: document.getElementById("difficulty-select"),
-    modeSelect: document.getElementById("mode-select"),
-    gridSizeSelect: document.getElementById("grid-size-select"),
-    soundSelect: document.getElementById("sound-select"),
-    assistSelect: document.getElementById("assist-select"),
+    optionButtons: Array.from(document.querySelectorAll("[data-setting]")),
     saveSettingsBtn: document.getElementById("save-settings-btn"),
     resetSettingsBtn: document.getElementById("reset-settings-btn"),
     settingsPreview: document.getElementById("settings-preview"),
     settingsMessage: document.getElementById("settings-message")
 };
-let settingsEventsBound = false;
 
 document.addEventListener("DOMContentLoaded", initSettingsPage);
 window.addEventListener("pageshow", syncSettingsPage);
@@ -35,8 +34,9 @@ function syncSettingsPage() {
     }
 
     const store = CacaContexto.getStore();
-    fillSettingsFormFrom(store.settings);
-    applySkin(store.settings.skin);
+    settingsState.draft = { ...store.settings };
+    applySkin(settingsState.draft.skin);
+    renderOptionButtons();
     renderSettingsPreview();
     setSettingsMessage("As preferências atuais já estão carregadas.");
 }
@@ -45,71 +45,72 @@ function registerSettingsEvents() {
     settingsElements.presetButtons.forEach((button) => {
         button.addEventListener("click", () => applyPreset(button.dataset.preset));
     });
-    settingsElements.skinSelect.addEventListener("change", handlePreviewChange);
-    settingsElements.difficultySelect.addEventListener("change", handleFieldChange);
-    settingsElements.modeSelect.addEventListener("change", handleFieldChange);
-    settingsElements.gridSizeSelect.addEventListener("change", handleFieldChange);
-    settingsElements.soundSelect.addEventListener("change", handleFieldChange);
-    settingsElements.assistSelect.addEventListener("change", handleFieldChange);
+    settingsElements.optionButtons.forEach((button) => {
+        button.addEventListener("click", () => applyOption(button.dataset.setting, button.dataset.value));
+    });
     settingsElements.saveSettingsBtn.addEventListener("click", saveSettings);
     settingsElements.resetSettingsBtn.addEventListener("click", resetSettings);
 }
 
-function handlePreviewChange() {
-    applySkin(settingsElements.skinSelect.value);
-    renderSettingsPreview();
-    setSettingsMessage("Alterações prontas para salvar.");
-}
+function applyOption(setting, value) {
+    if (!settingsState.draft) {
+        settingsState.draft = { ...CacaContexto.DEFAULT_SETTINGS };
+    }
 
-function handleFieldChange() {
+    settingsState.draft[setting] = coerceSettingValue(setting, value);
+    if (setting === "skin") {
+        applySkin(settingsState.draft.skin);
+    }
+    renderOptionButtons();
     renderSettingsPreview();
     setSettingsMessage("Alterações prontas para salvar.");
 }
 
 function saveSettings() {
-    const settings = getSettingsFromForm();
+    const settings = getSettingsFromState();
     CacaContexto.setStore({ settings });
     applySkin(settings.skin);
+    renderOptionButtons();
     renderSettingsPreview();
     setSettingsMessage("Configurações salvas com sucesso.");
 }
 
 function resetSettings() {
-    const defaults = { ...CacaContexto.DEFAULT_SETTINGS };
-    CacaContexto.setStore({ settings: defaults });
-    fillSettingsFormFrom(defaults);
-    applySkin(defaults.skin);
+    settingsState.draft = { ...CacaContexto.DEFAULT_SETTINGS };
+    CacaContexto.setStore({ settings: settingsState.draft });
+    applySkin(settingsState.draft.skin);
+    renderOptionButtons();
     renderSettingsPreview();
     setSettingsMessage("Configurações restauradas para o padrão.");
 }
 
-function fillSettingsFormFrom(settings) {
-    settingsElements.skinSelect.value = settings.skin;
-    settingsElements.difficultySelect.value = settings.difficulty;
-    settingsElements.modeSelect.value = settings.mode;
-    settingsElements.gridSizeSelect.value = String(settings.gridSize);
-    settingsElements.soundSelect.value = settings.sound;
-    settingsElements.assistSelect.value = settings.assist;
-}
-
-function getSettingsFromForm() {
+function getSettingsFromState() {
     return {
-        skin: settingsElements.skinSelect.value,
-        difficulty: settingsElements.difficultySelect.value,
-        mode: settingsElements.modeSelect.value,
-        gridSize: Number(settingsElements.gridSizeSelect.value),
-        sound: settingsElements.soundSelect.value,
-        assist: settingsElements.assistSelect.value
+        skin: settingsState.draft.skin,
+        difficulty: settingsState.draft.difficulty,
+        mode: settingsState.draft.mode,
+        gridSize: Number(settingsState.draft.gridSize),
+        sound: settingsState.draft.sound,
+        assist: settingsState.draft.assist
     };
 }
 
+function renderOptionButtons() {
+    settingsElements.optionButtons.forEach((button) => {
+        const setting = button.dataset.setting;
+        const value = coerceSettingValue(setting, button.dataset.value);
+        const active = String(settingsState.draft[setting]) === String(value);
+        button.classList.toggle("is-active", active);
+    });
+}
+
 function renderSettingsPreview() {
-    const settings = getSettingsFromForm();
+    const settings = getSettingsFromState();
     const mode = CacaContexto.MODES[settings.mode];
     settingsElements.settingsPreview.innerHTML = `
         <strong>Resumo atual</strong>
         <p>
-            Visual ${labelForSkin(settings.skin)}, dificuldade ${CacaContexto.DIFFICULTIES[settings.difficulty].name},
+            ${labelForSkin(settings.skin)}, dificuldade ${CacaContexto.DIFFICULTIES[settings.difficulty].name},
             modo ${mode.name}, grade ${settings.gridSize}x${settings.gridSize},
             som ${settings.sound === "on" ? "ligado" : "desligado"} e pistas ${settings.assist === "smart" ? "ligadas" : "desligadas"}.
         </p>
@@ -117,30 +118,10 @@ function renderSettingsPreview() {
     `;
 }
 
-function labelForSkin(skin) {
-    const labels = {
-        coral: "Coral",
-        oceano: "Oceano",
-        jade: "Jade"
-    };
-
-    return labels[skin] || "Coral";
-}
-
-function applySkin(skin) {
-    document.body.dataset.skin = skin || "coral";
-}
-
-function setSettingsMessage(message) {
-    if (settingsElements.settingsMessage) {
-        settingsElements.settingsMessage.textContent = message;
-    }
-}
-
 function applyPreset(presetId) {
     const presets = {
         focus: {
-            skin: "coral",
+            skin: "light",
             difficulty: "medium",
             mode: "classic",
             gridSize: 12,
@@ -148,7 +129,7 @@ function applyPreset(presetId) {
             assist: "smart"
         },
         speed: {
-            skin: "oceano",
+            skin: "dark",
             difficulty: "hard",
             mode: "timed",
             gridSize: 15,
@@ -156,7 +137,7 @@ function applyPreset(presetId) {
             assist: "off"
         },
         calm: {
-            skin: "jade",
+            skin: "light",
             difficulty: "easy",
             mode: "relax",
             gridSize: 10,
@@ -169,22 +150,41 @@ function applyPreset(presetId) {
         return;
     }
 
-    fillSettingsFormFrom(preset);
+    settingsState.draft = { ...preset };
     applySkin(preset.skin);
+    renderOptionButtons();
     renderSettingsPreview();
     setSettingsMessage("Preset aplicado. Salve para manter essa configuração.");
 }
 
+function coerceSettingValue(setting, value) {
+    if (setting === "gridSize") {
+        return Number(value);
+    }
+
+    return value;
+}
+
+function labelForSkin(skin) {
+    return skin === "dark" ? "Modo Dark" : "Modo Claro";
+}
+
+function applySkin(skin) {
+    document.body.dataset.skin = skin || "light";
+}
+
+function setSettingsMessage(message) {
+    if (settingsElements.settingsMessage) {
+        settingsElements.settingsMessage.textContent = message;
+    }
+}
+
 function hasSettingsMarkup() {
     return Boolean(
-        settingsElements.skinSelect
-        && settingsElements.difficultySelect
-        && settingsElements.modeSelect
-        && settingsElements.gridSizeSelect
-        && settingsElements.soundSelect
-        && settingsElements.assistSelect
+        settingsElements.optionButtons.length
         && settingsElements.saveSettingsBtn
         && settingsElements.resetSettingsBtn
         && settingsElements.settingsPreview
+        && settingsElements.settingsMessage
     );
 }

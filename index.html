@@ -11,51 +11,51 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Oxanium:wght@500;600;700;800&family=Sora:wght@400;500;600;700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap"
         rel="stylesheet"
     >
-    <link rel="stylesheet" href="css/style.css?v=12">
+    <link rel="stylesheet" href="css/style.css?v=13">
 </head>
-<body class="page page--menu" data-page="menu" data-skin="coral">
-    <main class="shell shell--menu">
-        <section class="hero-card hero-card--menu">
-            <p class="eyebrow">Menu principal</p>
-            <h1>Caça ao Contexto</h1>
-            <p class="hero-copy">
-                Escolha a matéria, entre no jogo e destrave fatos reais enquanto joga.
-            </p>
-            <div class="menu-actions">
-                <a class="button button--ghost" href="configuracoes.html">Configurações</a>
-                <button id="start-game-btn" class="button button--primary" type="button">Jogar</button>
+<body class="page page--menu" data-page="menu" data-skin="light">
+    <main class="menu-shell">
+        <section id="menu-screen" class="menu-stage menu-stage--home">
+            <div class="main-actions">
+                <button id="open-subjects-btn" class="action-pill action-pill--icon" type="button">
+                    <span class="action-pill__icon" aria-hidden="true">▶</span>
+                    <span>Jogar</span>
+                </button>
+                <button id="exit-btn" class="action-pill action-pill--icon" type="button">
+                    <span class="action-pill__icon" aria-hidden="true">←</span>
+                    <span>Sair</span>
+                </button>
+                <a class="action-pill action-pill--wide" href="configuracoes.html">Configurações</a>
             </div>
-            <div id="menu-summary" class="status-card"></div>
+
+            <div id="menu-summary" class="menu-note"></div>
+            <p id="menu-feedback" class="menu-feedback" aria-live="polite"></p>
         </section>
 
-        <section class="panel-card panel-card--subjects panel-card--menu">
-            <section class="menu-section">
-                <div class="section-head">
-                    <div>
-                        <p class="eyebrow">Escolher matéria</p>
-                        <h2>Selecione sua área</h2>
-                    </div>
-                </div>
-                <div id="subject-grid" class="subject-grid"></div>
-            </section>
+        <section id="subject-screen" class="menu-stage menu-stage--subjects" hidden>
+            <header class="screen-head">
+                <button id="back-to-main-btn" class="action-pill action-pill--small" type="button">Voltar</button>
+                <h1>Escolher matéria</h1>
+                <button id="play-selected-btn" class="action-pill action-pill--small" type="button">Jogar</button>
+            </header>
 
-            <section class="menu-section menu-theme-panel">
-                <div class="section-head">
-                    <div>
-                        <p class="eyebrow">Temas</p>
-                        <h2>Dossiê da rodada</h2>
-                    </div>
+            <div id="subject-grid" class="subject-grid subject-grid--poster"></div>
+
+            <section class="theme-strip">
+                <div class="theme-strip__head">
+                    <h2 id="selected-subject-name">Matéria selecionada</h2>
+                    <p id="selected-subject-copy"></p>
                 </div>
-                <div id="menu-theme-list" class="theme-list"></div>
-                <div id="menu-theme-summary" class="status-card"></div>
+                <div id="menu-theme-list" class="theme-list theme-list--poster"></div>
+                <div id="menu-theme-summary" class="theme-note"></div>
             </section>
         </section>
     </main>
 
-    <script src="js/app-data.js?v=12"></script>
-    <script src="js/menu.js?v=12"></script>
+    <script src="js/app-data.js?v=13"></script>
+    <script src="js/menu.js?v=13"></script>
 </body>
 </html>

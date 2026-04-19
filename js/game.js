@@ -721,7 +721,7 @@ function renderBoard() {
     ctx.clearRect(0, 0, size, size);
     ctx.fillStyle = colors.paper;
     ctx.fillRect(0, 0, size, size);
-    ctx.font = `700 ${Math.max(12, cellSize * 0.38)}px Sora`;
+    ctx.font = `800 ${Math.max(12, cellSize * 0.38)}px Nunito`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
@@ -809,7 +809,7 @@ function setFeedback(message) {
 }
 
 function applySkin(skin) {
-    document.body.dataset.skin = skin || "coral";
+    document.body.dataset.skin = skin || "light";
 }
 
 function buildWordContentMarkup(word) {

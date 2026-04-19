@@ -1,24 +1,31 @@
 const menuState = {
     selectedSubject: CacaContexto.getStore().selectedSubject,
-    selectedTheme: CacaContexto.getStore().selectedTheme
+    selectedTheme: CacaContexto.getStore().selectedTheme,
+    currentScreen: "home"
 };
 let menuEventsBound = false;
 
 const menuElements = {
+    menuScreen: document.getElementById("menu-screen"),
+    subjectScreen: document.getElementById("subject-screen"),
+    openSubjectsBtn: document.getElementById("open-subjects-btn"),
+    backToMainBtn: document.getElementById("back-to-main-btn"),
+    playSelectedBtn: document.getElementById("play-selected-btn"),
+    exitBtn: document.getElementById("exit-btn"),
     subjectGrid: document.getElementById("subject-grid"),
-    startGameBtn: document.getElementById("start-game-btn"),
     menuSummary: document.getElementById("menu-summary"),
-    menuMetrics: document.getElementById("menu-metrics"),
-    subjectSpotlight: document.getElementById("subject-spotlight"),
+    menuFeedback: document.getElementById("menu-feedback"),
     menuThemeList: document.getElementById("menu-theme-list"),
-    menuThemeSummary: document.getElementById("menu-theme-summary")
+    menuThemeSummary: document.getElementById("menu-theme-summary"),
+    selectedSubjectName: document.getElementById("selected-subject-name"),
+    selectedSubjectCopy: document.getElementById("selected-subject-copy")
 };
 
 document.addEventListener("DOMContentLoaded", initMenuPage);
 window.addEventListener("pageshow", syncMenuPage);
 
 function initMenuPage() {
-    if (!menuElements.subjectGrid || !menuElements.startGameBtn || !menuElements.menuSummary) {
+    if (!hasMenuMarkup()) {
         return;
     }
 
@@ -31,7 +38,7 @@ function initMenuPage() {
 }
 
 function syncMenuPage() {
-    if (!menuElements.subjectGrid || !menuElements.menuSummary) {
+    if (!hasMenuMarkup()) {
         return;
     }
 
@@ -42,20 +49,32 @@ function syncMenuPage() {
     menuState.selectedSubject = subject.id;
     menuState.selectedTheme = theme.id;
     applySkin(store.settings.skin);
-    renderSubjectGrid();
     renderMenuSummary();
-    renderMenuMetrics(store);
+    renderSubjectGrid();
     renderSubjectSpotlight();
     renderThemeList();
     renderThemeSummary();
+    showScreen(menuState.currentScreen);
 }
 
 function registerMenuEvents() {
+    menuElements.openSubjectsBtn.addEventListener("click", () => showScreen("subjects"));
+    menuElements.backToMainBtn.addEventListener("click", () => showScreen("home"));
+    menuElements.playSelectedBtn.addEventListener("click", startGame);
+    menuElements.exitBtn.addEventListener("click", handleExit);
     menuElements.subjectGrid.addEventListener("click", handleSubjectClick);
-    if (menuElements.menuThemeList) {
-        menuElements.menuThemeList.addEventListener("click", handleThemeClick);
-    }
-    menuElements.startGameBtn.addEventListener("click", startGame);
+    menuElements.menuThemeList.addEventListener("click", handleThemeClick);
+}
+
+function showScreen(screen) {
+    menuState.currentScreen = screen === "subjects" ? "subjects" : "home";
+    menuElements.menuScreen.hidden = menuState.currentScreen !== "home";
+    menuElements.subjectScreen.hidden = menuState.currentScreen !== "subjects";
+    setMenuFeedback(
+        menuState.currentScreen === "home"
+            ? "Use Jogar para escolher a matéria e abrir a seleção de temas."
+            : "Escolha a matéria, selecione um tema e siga para a partida."
+    );
 }
 
 function handleSubjectClick(event) {
@@ -72,8 +91,6 @@ function handleSubjectClick(event) {
         selectedTheme: subject.themes[0].id
     });
     renderSubjectGrid();
-    renderMenuSummary();
-    renderMenuMetrics(CacaContexto.getStore());
     renderSubjectSpotlight();
     renderThemeList();
     renderThemeSummary();
@@ -92,7 +109,6 @@ function handleThemeClick(event) {
     });
     renderThemeList();
     renderThemeSummary();
-    renderMenuSummary();
 }
 
 function startGame() {
@@ -105,15 +121,23 @@ function startGame() {
     window.location.href = "jogo.html";
 }
 
+function handleExit() {
+    window.close();
+    setTimeout(() => {
+        if (!window.closed) {
+            setMenuFeedback("O navegador não deixou fechar a aba. Se quiser sair, basta fechá-la manualmente.");
+        }
+    }, 80);
+}
+
 function renderSubjectGrid() {
     menuElements.subjectGrid.innerHTML = CacaContexto.SUBJECTS.map((subject) => {
         const active = subject.id === menuState.selectedSubject ? "is-active" : "";
         return `
             <button class="subject-card ${active}" type="button" data-subject-id="${subject.id}">
-                <span class="subject-card__icon">${subject.icon}</span>
+                <span class="subject-card__icon" aria-hidden="true">${subject.icon}</span>
                 <div class="subject-card__body">
                     <strong>${subject.name}</strong>
-                    <p>${subject.description}</p>
                 </div>
             </button>
         `;
@@ -126,70 +150,21 @@ function renderMenuSummary() {
     const theme = CacaContexto.getTheme(subject.id, menuState.selectedTheme);
     const mode = CacaContexto.MODES[store.settings.mode];
     menuElements.menuSummary.innerHTML = `
-        <strong>${subject.name} · ${theme.name}</strong>
+        <strong>Rodada pronta</strong>
         <p>
-            ${CacaContexto.DIFFICULTIES[store.settings.difficulty].name}, ${mode.name} e grade
-            ${store.settings.gridSize}x${store.settings.gridSize}.
+            ${subject.name}, tema ${theme.name}, dificuldade ${CacaContexto.DIFFICULTIES[store.settings.difficulty].name},
+            modo ${mode.name} e grade ${store.settings.gridSize}x${store.settings.gridSize}.
         </p>
     `;
 }
 
-function applySkin(skin) {
-    document.body.dataset.skin = skin || "coral";
-}
-
-function renderMenuMetrics(store) {
-    if (!menuElements.menuMetrics) {
-        return;
-    }
-
-    const completed = store.results.filter((result) => result.completed).length;
-    const lastResult = store.results[store.results.length - 1];
-    menuElements.menuMetrics.innerHTML = `
-        <div class="metric-card">
-            <strong>${store.discovered.length}</strong>
-            <span>palavras guardadas no arquivo</span>
-        </div>
-        <div class="metric-card">
-            <strong>${completed}</strong>
-            <span>rodadas concluídas</span>
-        </div>
-        <div class="metric-card">
-            <strong>${lastResult ? lastResult.points : 0}</strong>
-            <span>última pontuação registrada</span>
-        </div>
-    `;
-}
-
 function renderSubjectSpotlight() {
-    if (!menuElements.subjectSpotlight) {
-        return;
-    }
-
     const subject = CacaContexto.getSubject(menuState.selectedSubject);
-    const featuredThemes = subject.themes
-        .slice(0, 3)
-        .map((theme) => `<span class="tag">${theme.name}</span>`)
-        .join("");
-
-    menuElements.subjectSpotlight.innerHTML = `
-        <div class="subject-spotlight__title">
-            <span class="subject-card__icon">${subject.icon}</span>
-            <div>
-                <p class="eyebrow">Destaque atual</p>
-                <strong>${subject.name}</strong>
-            </div>
-        </div>
-        <p class="subject-spotlight__copy">${subject.description}</p>
-        <div class="tag-list">${featuredThemes}</div>
-    `;
+    menuElements.selectedSubjectName.textContent = subject.name;
+    menuElements.selectedSubjectCopy.textContent = subject.description;
 }
 
 function renderThemeList() {
-    if (!menuElements.menuThemeList) {
-        return;
-    }
-
     const subject = CacaContexto.getSubject(menuState.selectedSubject);
     menuElements.menuThemeList.innerHTML = subject.themes.map((theme) => {
         const active = theme.id === menuState.selectedTheme ? "is-active" : "";
@@ -202,15 +177,39 @@ function renderThemeList() {
 }
 
 function renderThemeSummary() {
-    if (!menuElements.menuThemeSummary) {
-        return;
-    }
-
     const subject = CacaContexto.getSubject(menuState.selectedSubject);
     const theme = CacaContexto.getTheme(subject.id, menuState.selectedTheme);
     menuElements.menuThemeSummary.innerHTML = `
         <strong>${theme.name}</strong>
         <p>${theme.summary}</p>
-        <p>${theme.words.length} palavra(s) nesse dossiê.</p>
+        <p>${theme.words.length} palavra(s) disponíveis para este tema.</p>
     `;
+}
+
+function applySkin(skin) {
+    document.body.dataset.skin = skin || "light";
+}
+
+function setMenuFeedback(message) {
+    if (menuElements.menuFeedback) {
+        menuElements.menuFeedback.textContent = message;
+    }
+}
+
+function hasMenuMarkup() {
+    return Boolean(
+        menuElements.menuScreen
+        && menuElements.subjectScreen
+        && menuElements.openSubjectsBtn
+        && menuElements.backToMainBtn
+        && menuElements.playSelectedBtn
+        && menuElements.exitBtn
+        && menuElements.subjectGrid
+        && menuElements.menuSummary
+        && menuElements.menuFeedback
+        && menuElements.menuThemeList
+        && menuElements.menuThemeSummary
+        && menuElements.selectedSubjectName
+        && menuElements.selectedSubjectCopy
+    );
 }

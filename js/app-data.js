@@ -3,7 +3,7 @@
     const WINDOW_NAME_PREFIX = "__caca_contexto_store__:";
 
     const DEFAULT_SETTINGS = {
-        skin: "coral",
+        skin: "light",
         difficulty: "medium",
         mode: "classic",
         gridSize: 12,
@@ -346,7 +346,7 @@
     }
 
     function sanitizeSettings(settings) {
-        const skin = ["coral", "oceano", "jade"].includes(settings.skin) ? settings.skin : DEFAULT_SETTINGS.skin;
+        const skin = settings.skin === "dark" ? "dark" : DEFAULT_SETTINGS.skin;
         const difficulty = DIFFICULTIES[settings.difficulty] ? settings.difficulty : DEFAULT_SETTINGS.difficulty;
         const mode = MODES[settings.mode] ? settings.mode : DEFAULT_SETTINGS.mode;
         const gridSize = VALID_GRID_SIZES.includes(Number(settings.gridSize)) ? Number(settings.gridSize) : DEFAULT_SETTINGS.gridSize;

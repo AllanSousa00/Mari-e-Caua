@@ -11,93 +11,95 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Oxanium:wght@500;600;700;800&family=Sora:wght@400;500;600;700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap"
         rel="stylesheet"
     >
-    <link rel="stylesheet" href="css/style.css?v=12">
+    <link rel="stylesheet" href="css/style.css?v=13">
 </head>
-<body class="page page--settings" data-page="settings" data-skin="coral">
-    <main class="shell shell--settings">
-        <header class="topbar topbar--simple">
-            <a class="button button--ghost" href="index.html">Menu</a>
-            <div class="topbar-copy">
-                <p class="eyebrow">Configurações</p>
-                <h1>Organize seu jeito de jogar</h1>
-            </div>
-            <a class="button button--ghost" href="jogo.html">Jogo</a>
+<body class="page page--settings" data-page="settings" data-skin="light">
+    <main class="settings-shell">
+        <header class="settings-header">
+            <a class="action-pill action-pill--small" href="index.html">Voltar</a>
+            <h1>Configurações</h1>
+            <a class="action-pill action-pill--small" href="jogo.html">Jogar</a>
         </header>
 
-        <section class="panel-card settings-card">
-            <div class="settings-presets">
-                <button class="preset-button" type="button" data-preset="focus">Foco ENEM</button>
-                <button class="preset-button" type="button" data-preset="speed">Ritmo Rápido</button>
-                <button class="preset-button" type="button" data-preset="calm">Estudo Leve</button>
-            </div>
+        <section class="settings-board">
+            <section class="control-block">
+                <h2 class="settings-heading">Presets</h2>
+                <div class="pill-group pill-group--wide">
+                    <button class="option-pill" type="button" data-preset="focus">Foco ENEM</button>
+                    <button class="option-pill" type="button" data-preset="speed">Ritmo Rápido</button>
+                    <button class="option-pill" type="button" data-preset="calm">Estudo Leve</button>
+                </div>
+            </section>
 
-            <div class="settings-grid">
-                <label class="field">
-                    <span>Visual</span>
-                    <select id="skin-select">
-                        <option value="coral">Coral</option>
-                        <option value="oceano">Oceano</option>
-                        <option value="jade">Jade</option>
-                    </select>
-                </label>
-                <label class="field">
-                    <span>Dificuldade</span>
-                    <select id="difficulty-select">
-                        <option value="easy">Fácil</option>
-                        <option value="medium">Médio</option>
-                        <option value="hard">Difícil</option>
-                        <option value="expert">Expert</option>
-                    </select>
-                </label>
-                <label class="field">
-                    <span>Modo</span>
-                    <select id="mode-select">
-                        <option value="classic">Clássico</option>
-                        <option value="timed">Contra o tempo</option>
-                        <option value="relax">Relaxante</option>
-                        <option value="progressive">Progressivo</option>
-                        <option value="surprise">Tema surpresa</option>
-                    </select>
-                </label>
-                <label class="field">
-                    <span>Grade</span>
-                    <select id="grid-size-select">
-                        <option value="10">10x10</option>
-                        <option value="12">12x12</option>
-                        <option value="15">15x15</option>
-                        <option value="18">18x18</option>
-                    </select>
-                </label>
-                <label class="field">
-                    <span>Som</span>
-                    <select id="sound-select">
-                        <option value="on">Ligado</option>
-                        <option value="off">Desligado</option>
-                    </select>
-                </label>
-                <label class="field">
-                    <span>Pistas</span>
-                    <select id="assist-select">
-                        <option value="smart">Ligadas</option>
-                        <option value="off">Desligadas</option>
-                    </select>
-                </label>
-            </div>
+            <section class="control-block">
+                <h2 class="settings-heading">Dificuldade</h2>
+                <div class="pill-group">
+                    <button class="option-pill" type="button" data-setting="difficulty" data-value="easy">Fácil</button>
+                    <button class="option-pill" type="button" data-setting="difficulty" data-value="medium">Médio</button>
+                    <button class="option-pill" type="button" data-setting="difficulty" data-value="hard">Difícil</button>
+                    <button class="option-pill" type="button" data-setting="difficulty" data-value="expert">Expert</button>
+                </div>
+            </section>
 
-            <div id="settings-preview" class="status-card"></div>
+            <section class="control-block">
+                <h2 class="settings-heading">Modo</h2>
+                <div class="pill-group pill-group--wide">
+                    <button class="option-pill" type="button" data-setting="mode" data-value="classic">Clássico</button>
+                    <button class="option-pill" type="button" data-setting="mode" data-value="timed">Contra o tempo</button>
+                    <button class="option-pill" type="button" data-setting="mode" data-value="relax">Relaxante</button>
+                    <button class="option-pill" type="button" data-setting="mode" data-value="progressive">Progressivo</button>
+                    <button class="option-pill" type="button" data-setting="mode" data-value="surprise">Tema surpresa</button>
+                </div>
+            </section>
+
+            <section class="control-block">
+                <h2 class="settings-heading">Grade</h2>
+                <div class="pill-group">
+                    <button class="option-pill" type="button" data-setting="gridSize" data-value="10">10x10</button>
+                    <button class="option-pill" type="button" data-setting="gridSize" data-value="12">12x12</button>
+                    <button class="option-pill" type="button" data-setting="gridSize" data-value="15">15x15</button>
+                    <button class="option-pill" type="button" data-setting="gridSize" data-value="18">18x18</button>
+                </div>
+            </section>
+
+            <section class="control-block">
+                <h2 class="settings-heading">Pistas</h2>
+                <div class="pill-group">
+                    <button class="option-pill" type="button" data-setting="assist" data-value="smart">Ligadas</button>
+                    <button class="option-pill" type="button" data-setting="assist" data-value="off">Desligadas</button>
+                </div>
+            </section>
+
+            <section class="control-block">
+                <h2 class="settings-heading">Som</h2>
+                <div class="pill-group">
+                    <button class="option-pill" type="button" data-setting="sound" data-value="on">Ligado</button>
+                    <button class="option-pill" type="button" data-setting="sound" data-value="off">Desligado</button>
+                </div>
+            </section>
+
+            <section class="control-block">
+                <h2 class="settings-heading">Aparência</h2>
+                <div class="pill-group">
+                    <button class="option-pill" type="button" data-setting="skin" data-value="light">Modo Claro</button>
+                    <button class="option-pill" type="button" data-setting="skin" data-value="dark">Modo Dark</button>
+                </div>
+            </section>
+
+            <div id="settings-preview" class="settings-note"></div>
             <p id="settings-message" class="settings-message" aria-live="polite"></p>
 
-            <div class="menu-actions">
-                <button id="save-settings-btn" class="button button--primary" type="button">Salvar</button>
-                <button id="reset-settings-btn" class="button button--ghost" type="button">Restaurar padrão</button>
+            <div class="settings-actions">
+                <button id="save-settings-btn" class="action-pill action-pill--small" type="button">Salvar</button>
+                <button id="reset-settings-btn" class="action-pill action-pill--small" type="button">Restaurar padrão</button>
             </div>
         </section>
     </main>
 
-    <script src="js/app-data.js?v=12"></script>
-    <script src="js/settings.js?v=12"></script>
+    <script src="js/app-data.js?v=13"></script>
+    <script src="js/settings.js?v=13"></script>
 </body>
 </html>
